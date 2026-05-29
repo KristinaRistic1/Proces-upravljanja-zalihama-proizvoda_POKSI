@@ -11,7 +11,7 @@ uses
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.Phys.SQLite,
   FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs,
   FireDAC.Phys.SQLiteWrapper.Stat, FireDAC.FMXUI.Wait, Data.DB,
-  FireDAC.Comp.Client, FireDAC.Comp.DataSet,uUserStore,fraHome;
+  FireDAC.Comp.Client, FireDAC.Comp.DataSet, uUserStore, fraHome;
 
 type
   TForm5 = class(TForm)
@@ -32,23 +32,28 @@ implementation
 
 {$R *.fmx}
 
- procedure TForm5.FormCreate(Sender: TObject);
- var
+procedure TForm5.FormCreate(Sender: TObject);
+var
   Stream: TResourceStream;
 begin
+  ClientHeight := Round(Screen.WorkAreaHeight);
+  ClientWidth := 390;
+
   TNavFrames.Init(layHost);
   TNavFrames.Go(TFrame1.Create(nil));
   FDConnection1.Connected := True;
   DB := FDConnection1;
+
   FDQuery1.SQL.Text :=
-  'CREATE TABLE IF NOT EXISTS users (' +
-  'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
-  'username TEXT UNIQUE,' +
-  'email TEXT UNIQUE,' +
-  'phone TEXT,' +
-  'password TEXT' +
-  ')';
+    'CREATE TABLE IF NOT EXISTS users (' +
+    'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    'username TEXT UNIQUE,' +
+    'email TEXT UNIQUE,' +
+    'phone TEXT,' +
+    'password TEXT' +
+    ')';
   FDQuery1.ExecSQL;
+
   FDQuery1.SQL.Text :=
     'CREATE TABLE IF NOT EXISTS pets (' +
     'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
@@ -59,6 +64,7 @@ begin
     'image_blob BLOB' +
     ')';
   FDQuery1.ExecSQL;
+
   FDQuery1.SQL.Text := 'SELECT COUNT(*) FROM pets';
   FDQuery1.Open;
   if FDQuery1.Fields[0].AsInteger = 0 then
@@ -66,6 +72,7 @@ begin
     FDQuery1.SQL.Text :=
       'INSERT INTO pets (name, species, breed, age, image_blob) ' +
       'VALUES (:name, :species, :breed, :age, :img)';
+
     FDQuery1.ParamByName('name').AsString := 'Fido';
     FDQuery1.ParamByName('species').AsString := 'pas';
     FDQuery1.ParamByName('breed').AsString := 'Labrador';
@@ -103,7 +110,8 @@ begin
     FDQuery1.ExecSQL;
   end
   else
-  FDQuery1.Close;
+    FDQuery1.Close;
+
   LoadPetsFromDB;
   TNavFrames.Init(layHost);
   TNavFrames.Go(TFrame1.Create(nil));
@@ -137,6 +145,5 @@ begin
     Q.Free;
   end;
 end;
-
 
 end.

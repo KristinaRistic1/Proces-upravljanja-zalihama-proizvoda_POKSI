@@ -1,0 +1,179 @@
+object fraIzvestaj: TfraIzvestaj
+  Left = 0
+  Top = 0
+  ClientHeight = 480
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop, iPhone, iPad]
+  DesignerMasterStyle = 0
+  object Layout1: TLayout
+    Align = Client
+    Size.Width = 640.000000000000000000
+    Size.Height = 480.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Layout2: TLayout
+      Align = Top
+      Size.Width = 640.000000000000000000
+      Size.Height = 64.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object rectHeader: TRectangle
+        Align = Client
+        Fill.Color = claYellow
+        Size.Width = 640.000000000000000000
+        Size.Height = 64.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Kind = None
+        object lblBack: TLabel
+          Align = Left
+          Cursor = crHandPoint
+          StyledSettings = [Family, FontColor]
+          HitTest = True
+          Margins.Left = 14.000000000000000000
+          Position.X = 14.000000000000000000
+          Size.Width = 40.000000000000000000
+          Size.Height = 64.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.Font.Size = 22.000000000000000000
+          TextSettings.HorzAlign = Center
+          Text = #8592
+          TabOrder = 0
+          OnClick = lblBackClick
+        end
+        object lblTitle: TLabel
+          Align = Client
+          StyledSettings = [Family, FontColor]
+          Size.Width = 586.000000000000000000
+          Size.Height = 64.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.Font.Size = 20.000000000000000000
+          TextSettings.Font.StyleExt = {00070000000000000004000000}
+          Text = 'Izvestaji'
+          TabOrder = 1
+        end
+      end
+    end
+    object layTabovi: TLayout
+      Align = Top
+      Padding.Left = 14.000000000000000000
+      Padding.Top = 6.000000000000000000
+      Padding.Right = 14.000000000000000000
+      Padding.Bottom = 6.000000000000000000
+      Position.Y = 64.000000000000000000
+      Size.Width = 640.000000000000000000
+      Size.Height = 44.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      object rectTabNabavka: TRectangle
+        Align = Left
+        Fill.Color = claYellow
+        Margins.Right = 6.000000000000000000
+        Position.X = 14.000000000000000000
+        Position.Y = 6.000000000000000000
+        Size.Width = 100.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Kind = None
+        XRadius = 16.000000000000000000
+        YRadius = 16.000000000000000000
+        OnClick = rectTabNabavkaClick
+        object lblTabNabavka: TLabel
+          Align = Client
+          StyledSettings = [Family, FontColor]
+          Size.Width = 100.000000000000000000
+          Size.Height = 32.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.Font.Size = 11.000000000000000000
+          TextSettings.Font.StyleExt = {00070000000000000004000000}
+          TextSettings.HorzAlign = Center
+          Text = 'Nabavka'
+          TabOrder = 0
+        end
+      end
+      object rectTabZalihe: TRectangle
+        Align = Left
+        Fill.Color = xFFE5E7EB
+        Margins.Right = 6.000000000000000000
+        Position.X = 120.000000000000000000
+        Position.Y = 6.000000000000000000
+        Size.Width = 100.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Kind = None
+        XRadius = 16.000000000000000000
+        YRadius = 16.000000000000000000
+        OnClick = rectTabZaliheClick
+        object lblTabZalihe: TLabel
+          Align = Client
+          StyledSettings = [Family, FontColor]
+          Size.Width = 100.000000000000000000
+          Size.Height = 32.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.Font.Size = 11.000000000000000000
+          TextSettings.HorzAlign = Center
+          Text = 'Zalihe'
+          TabOrder = 0
+        end
+      end
+      object rectTabAktivnosti: TRectangle
+        Align = Left
+        Fill.Color = xFFE5E7EB
+        Position.X = 226.000000000000000000
+        Position.Y = 6.000000000000000000
+        Size.Width = 106.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Kind = None
+        XRadius = 16.000000000000000000
+        YRadius = 16.000000000000000000
+        OnClick = rectTabAktivnostiClick
+        object lblTabAktivnosti: TLabel
+          Align = Client
+          StyledSettings = [Family, FontColor]
+          Size.Width = 106.000000000000000000
+          Size.Height = 32.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.Font.Size = 11.000000000000000000
+          TextSettings.HorzAlign = Center
+          Text = 'Aktivnosti'
+          TabOrder = 0
+        end
+      end
+    end
+    object lstIzvestaj: TListBox
+      Align = Client
+      Size.Width = 640.000000000000000000
+      Size.Height = 302.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      DisableFocusEffect = True
+      ItemHeight = 70.000000000000000000
+      DefaultItemStyles.ItemStyle = ''
+      DefaultItemStyles.GroupHeaderStyle = ''
+      DefaultItemStyles.GroupFooterStyle = ''
+      Viewport.Width = 636.000000000000000000
+      Viewport.Height = 298.000000000000000000
+    end
+    object Layout4: TLayout
+      Align = Bottom
+      Position.Y = 410.000000000000000000
+      Size.Width = 640.000000000000000000
+      Size.Height = 70.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      object rectNav: TRectangle
+        Align = Client
+        Corners = [TopLeft, TopRight]
+        Fill.Color = claYellow
+        Size.Width = 640.000000000000000000
+        Size.Height = 70.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Kind = None
+        XRadius = 24.000000000000000000
+        YRadius = 24.000000000000000000
+      end
+    end
+  end
+end

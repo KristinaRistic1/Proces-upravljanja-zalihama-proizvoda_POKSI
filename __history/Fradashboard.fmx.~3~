@@ -1,0 +1,243 @@
+object fraDashboard: TfraDashboard
+  Size.Width = 320.000000000000000000
+  Size.Height = 240.000000000000000000
+  Size.PlatformDefault = False
+  object Layout1: TLayout
+    Align = Client
+    Size.Width = 320.000000000000000000
+    Size.Height = 240.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Layout2: TLayout
+      Align = Top
+      Size.Width = 320.000000000000000000
+      Size.Height = 80.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object rectHeader: TRectangle
+        Align = Client
+        Fill.Color = claYellow
+        Size.Width = 320.000000000000000000
+        Size.Height = 80.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Kind = None
+        object lblTitle: TLabel
+          Align = Top
+          StyledSettings = [Family, FontColor]
+          Margins.Left = 16.000000000000000000
+          Margins.Top = 12.000000000000000000
+          Position.X = 16.000000000000000000
+          Position.Y = 12.000000000000000000
+          Size.Width = 304.000000000000000000
+          Size.Height = 30.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.Font.Size = 22.000000000000000000
+          TextSettings.Font.StyleExt = {00070000000000000004000000}
+          Text = 'Dashboard'
+          TabOrder = 0
+        end
+        object lblDatum: TLabel
+          Align = Top
+          StyledSettings = [Family, FontColor]
+          Margins.Left = 16.000000000000000000
+          Position.X = 16.000000000000000000
+          Position.Y = 42.000000000000000000
+          Size.Width = 304.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.FontColor = xFF333333
+          Text = 'Danas: '
+          TabOrder = 1
+        end
+      end
+    end
+    object Layout3: TVertScrollBox
+      Align = Client
+      Padding.Left = 14.000000000000000000
+      Padding.Top = 12.000000000000000000
+      Padding.Right = 14.000000000000000000
+      Size.Width = 320.000000000000000000
+      Size.Height = 90.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Viewport.Width = 640.000000000000000000
+      Viewport.Height = 330.000000000000000000
+      object layKartice: TLayout
+        Align = Top
+        Margins.Bottom = 16.000000000000000000
+        Position.X = 14.000000000000000000
+        Position.Y = 12.000000000000000000
+        Size.Width = 612.000000000000000000
+        Size.Height = 90.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        object rectCrveno: TRectangle
+          Align = Left
+          Fill.Color = xFFEF4444
+          Margins.Right = 6.000000000000000000
+          Size.Width = 110.000000000000000000
+          Size.Height = 90.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 12.000000000000000000
+          YRadius = 12.000000000000000000
+          object lblCrvenoBroj: TLabel
+            Align = Top
+            StyledSettings = [Family, FontColor]
+            Margins.Top = 14.000000000000000000
+            Position.Y = 14.000000000000000000
+            Size.Width = 110.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Size = 26.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            TextSettings.FontColor = claWhite
+            TextSettings.HorzAlign = Center
+            Text = '0'
+            TabOrder = 0
+          end
+          object lblCrvenoTekst: TLabel
+            Align = Top
+            StyledSettings = [Family, FontColor]
+            Position.Y = 46.000000000000000000
+            Size.Width = 110.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Size = 10.000000000000000000
+            TextSettings.FontColor = claWhite
+            TextSettings.HorzAlign = Center
+            Text = 'Hitno'
+            TabOrder = 1
+          end
+        end
+        object rectZuto: TRectangle
+          Align = Left
+          Fill.Color = xFFF59E0B
+          Margins.Right = 6.000000000000000000
+          Position.X = 116.000000000000000000
+          Size.Width = 110.000000000000000000
+          Size.Height = 90.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 12.000000000000000000
+          YRadius = 12.000000000000000000
+          object lblZutoBroj: TLabel
+            Align = Top
+            StyledSettings = [Family, FontColor]
+            Margins.Top = 14.000000000000000000
+            Position.Y = 14.000000000000000000
+            Size.Width = 110.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Size = 26.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            TextSettings.FontColor = claWhite
+            TextSettings.HorzAlign = Center
+            Text = '0'
+            TabOrder = 0
+          end
+          object lblZutoTekst: TLabel
+            Align = Top
+            StyledSettings = [Family, FontColor]
+            Position.Y = 46.000000000000000000
+            Size.Width = 110.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Size = 10.000000000000000000
+            TextSettings.FontColor = claWhite
+            TextSettings.HorzAlign = Center
+            Text = 'Upozorenje'
+            TabOrder = 1
+          end
+        end
+        object rectZeleno: TRectangle
+          Align = Left
+          Fill.Color = xFF22C55E
+          Position.X = 232.000000000000000000
+          Size.Width = 110.000000000000000000
+          Size.Height = 90.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 12.000000000000000000
+          YRadius = 12.000000000000000000
+          object lblZelenoBroj: TLabel
+            Align = Top
+            StyledSettings = [Family, FontColor]
+            Margins.Top = 14.000000000000000000
+            Position.Y = 14.000000000000000000
+            Size.Width = 110.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Size = 26.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            TextSettings.FontColor = claWhite
+            TextSettings.HorzAlign = Center
+            Text = '0'
+            TabOrder = 0
+          end
+          object lblZelenoTekst: TLabel
+            Align = Top
+            StyledSettings = [Family, FontColor]
+            Position.Y = 46.000000000000000000
+            Size.Width = 110.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Size = 10.000000000000000000
+            TextSettings.FontColor = claWhite
+            TextSettings.HorzAlign = Center
+            Text = 'U redu'
+            TabOrder = 1
+          end
+        end
+      end
+      object lblAlarmiTitle: TLabel
+        Align = Top
+        StyledSettings = [Family, FontColor]
+        Margins.Bottom = 8.000000000000000000
+        Position.X = 14.000000000000000000
+        Position.Y = 118.000000000000000000
+        Size.Width = 612.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 15.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.FontColor = xFF111827
+        Text = 'Aktivni alarmi'
+        TabOrder = 1
+      end
+      object lstAlarmi: TListBox
+        Align = Client
+        Size.Width = 612.000000000000000000
+        Size.Height = 182.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        DisableFocusEffect = True
+        ItemHeight = 72.000000000000000000
+        DefaultItemStyles.ItemStyle = ''
+        DefaultItemStyles.GroupHeaderStyle = ''
+        DefaultItemStyles.GroupFooterStyle = ''
+        Viewport.Width = 608.000000000000000000
+        Viewport.Height = 178.000000000000000000
+      end
+    end
+    object Layout4: TLayout
+      Align = Bottom
+      Position.Y = 170.000000000000000000
+      Size.Width = 320.000000000000000000
+      Size.Height = 70.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      object rectNav: TRectangle
+        Align = Client
+        Corners = [TopLeft, TopRight]
+        Fill.Color = claYellow
+        Size.Width = 320.000000000000000000
+        Size.Height = 70.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Kind = None
+        XRadius = 24.000000000000000000
+        YRadius = 24.000000000000000000
+      end
+    end
+  end
+end

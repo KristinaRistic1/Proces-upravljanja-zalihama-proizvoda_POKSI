@@ -12,10 +12,16 @@ uses
   fraWelcome in 'fraWelcome.pas' {Frame1: TFrame},
   fraLogin in 'fraLogin.pas' {Frame2: TFrame},
   fraForgot in 'fraForgot.pas' {Frame3: TFrame},
-  fraRegister in 'fraRegister.pas' {Frame4: TFrame},
   uNavFrames in 'uNavFrames.pas',
   fraHome in 'fraHome.pas' {Frame5: TFrame},
-  uPetModel in 'uPetModel.pas';
+  uPetModel in 'uPetModel.pas',
+  fraMagacin in 'fraMagacin.pas' {fraMagacin: TFrame},
+  fraEvidencija in 'fraEvidencija.pas' {fraEvidencija: TFrame},
+  fraNabavka in 'fraNabavka.pas' {fraNabavka: TFrame},
+  fraRegister in 'fraRegister.pas' {Frame4: TFrame},
+  fraTok in 'fraTok.pas' {fraTok: TFrame},
+  Fradashboard in 'Fradashboard.pas' {fraDashboard: TFrame},
+  Fraizvestaj in 'Fraizvestaj.pas' {fraIzvestaj: TFrame};
 
 {$R *.res}
 

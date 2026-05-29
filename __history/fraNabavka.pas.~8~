@@ -1,0 +1,355 @@
+﻿unit fraNabavka;
+
+interface
+
+uses
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
+  FMX.Edit, FMX.Objects, FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox,FMX.ScrollBox,
+  FireDAC.Comp.Client, uUserStore, uNavFrames;
+
+type
+  TfraNabavka = class(TFrame)
+    Layout1: TLayout;
+    Layout2: TLayout;
+    rectHeader: TRectangle;
+    lblBack: TLabel;
+    lblTitle: TLabel;
+    Layout3: TVertScrollBox;
+    lblNovaNabavka: TLabel;
+    lblArtikalLabel: TLabel;
+    cmbArtikal: TComboBox;
+    lblDobavljacLabel: TLabel;
+    cmbDobavljac: TComboBox;
+    lblKolicinaLabel: TLabel;
+    edtKolicina: TEdit;
+    lblFakturaLabel: TLabel;
+    edtFaktura: TEdit;
+    layCheck: TLayout;
+    edtNapomena: TCheckBox;
+    rectPotvrdi: TRectangle;
+    lblPotvrdi: TLabel;
+    rectStatus: TRectangle;
+    lblStatus: TLabel;
+    lblIstorijaTitle: TLabel;
+    lstIstorija: TListBox;
+    Layout4: TLayout;
+    rectNav: TRectangle;
+    procedure lblBackClick(Sender: TObject);
+    procedure rectPotvrdiClick(Sender: TObject);
+    procedure Loaded; override;
+  private
+    FResursID: Integer;
+    FDobavljacID: Integer;
+    procedure UcitajArtikle;
+    procedure UcitajDobavljace;
+    procedure ProknjizNabavku;
+    procedure ProveriAlarm;
+    procedure UcitajIstoriju;
+  public
+  end;
+
+implementation
+{$R *.fmx}
+
+procedure TfraNabavka.Loaded;
+begin
+  inherited;
+  rectStatus.Visible := False;
+  FResursID := 0;
+  FDobavljacID := 0;
+  UcitajArtikle;
+  UcitajDobavljace;
+  UcitajIstoriju;
+end;
+
+procedure TfraNabavka.UcitajArtikle;
+var
+  Q: TFDQuery;
+begin
+  cmbArtikal.Items.Clear;
+  Q := TFDQuery.Create(nil);
+  try
+    Q.Connection := DB;
+    Q.SQL.Text := 'SELECT SifraResursa, Naziv, JedinicaMere FROM RESURS ORDER BY Naziv';
+    Q.Open;
+    while not Q.Eof do
+    begin
+      cmbArtikal.Items.Add(
+        Q.FieldByName('Naziv').AsString + ' (' + Q.FieldByName('JedinicaMere').AsString + ')'
+      );
+      Q.Next;
+    end;
+  finally
+    Q.Free;
+  end;
+end;
+
+procedure TfraNabavka.UcitajDobavljace;
+var
+  Q: TFDQuery;
+begin
+  cmbDobavljac.Items.Clear;
+  Q := TFDQuery.Create(nil);
+  try
+    Q.Connection := DB;
+    Q.SQL.Text := 'SELECT SifraDobavljaca, Naziv FROM DOBAVLJAC ORDER BY Naziv';
+    Q.Open;
+    while not Q.Eof do
+    begin
+      cmbDobavljac.Items.Add(Q.FieldByName('Naziv').AsString);
+      Q.Next;
+    end;
+  finally
+    Q.Free;
+  end;
+end;
+
+procedure TfraNabavka.UcitajIstoriju;
+var
+  Q: TFDQuery;
+  Item: TListBoxItem;
+  layItem: TLayout;
+  lblGore, lblDole: TLabel;
+  Datum, Artikal, Dobavljac, Kolicina: string;
+begin
+  lstIstorija.BeginUpdate;
+  try
+    lstIstorija.Clear;
+    Q := TFDQuery.Create(nil);
+    try
+      Q.Connection := DB;
+      Q.SQL.Text :=
+        'SELECT N.Datum, R.Naziv, D.Naziv as Dobavljac, SN.KolicinaNarucena ' +
+        'FROM NARUDZBINA N ' +
+        'JOIN STAVKA_NARUDZBINE SN ON SN.BrojNarudzbine = N.BrojNarudzbine ' +
+        'JOIN RESURS R ON R.SifraResursa = SN.SifraResursa ' +
+        'JOIN DOBAVLJAC D ON D.SifraDobavljaca = N.SifraDobavljaca ' +
+        'ORDER BY N.Datum DESC, N.BrojNarudzbine DESC ' +
+        'LIMIT 20';
+      Q.Open;
+
+      if Q.Eof then
+      begin
+        Item := TListBoxItem.Create(lstIstorija);
+        Item.Height := 40;
+        Item.Text := 'Nema historije nabavki.';
+        lstIstorija.AddObject(Item);
+      end
+      else
+      while not Q.Eof do
+      begin
+        Datum     := Q.FieldByName('Datum').AsString;
+        Artikal   := Q.FieldByName('Naziv').AsString;
+        Dobavljac := Q.FieldByName('Dobavljac').AsString;
+        Kolicina  := FormatFloat('0.#', Q.FieldByName('KolicinaNarucena').AsFloat);
+
+        Item := TListBoxItem.Create(lstIstorija);
+        Item.Height := 60;
+        Item.StyleLookup := '';
+
+        var rectItem := TRectangle.Create(Item);
+        rectItem.Parent := Item;
+        rectItem.Align := TAlignLayout.Client;
+        rectItem.Margins.Left   := 4;
+        rectItem.Margins.Right  := 4;
+        rectItem.Margins.Top    := 3;
+        rectItem.Margins.Bottom := 3;
+        rectItem.Fill.Color := TAlphaColors.White;
+        rectItem.Stroke.Color := $FFE5E7EB;
+        rectItem.Stroke.Thickness := 1;
+        rectItem.XRadius := 8;
+        rectItem.YRadius := 8;
+
+        layItem := TLayout.Create(rectItem);
+        layItem.Parent := rectItem;
+        layItem.Align := TAlignLayout.Client;
+        layItem.Padding.Left   := 12;
+        layItem.Padding.Right  := 12;
+        layItem.Padding.Top    := 6;
+        layItem.Padding.Bottom := 6;
+
+        lblGore := TLabel.Create(layItem);
+        lblGore.Parent := layItem;
+        lblGore.Align := TAlignLayout.Top;
+        lblGore.Height := 20;
+        lblGore.Text := UpperCase(Artikal) + ' — ' + Kolicina + ' jed.';
+        lblGore.StyledSettings := [];
+        lblGore.TextSettings.Font.Size := 13;
+        lblGore.TextSettings.Font.Style := [TFontStyle.fsBold];
+        lblGore.TextSettings.FontColor := $FF111827;
+
+        lblDole := TLabel.Create(layItem);
+        lblDole.Parent := layItem;
+        lblDole.Align := TAlignLayout.Top;
+        lblDole.Height := 16;
+        lblDole.Margins.Top := 2;
+        lblDole.Text := Datum + '  |  ' + Dobavljac;
+        lblDole.StyledSettings := [];
+        lblDole.TextSettings.Font.Size := 10;
+        lblDole.TextSettings.FontColor := $FF9CA3AF;
+
+        lstIstorija.AddObject(Item);
+        Q.Next;
+      end;
+    finally
+      Q.Free;
+    end;
+  finally
+    lstIstorija.EndUpdate;
+  end;
+end;
+
+procedure TfraNabavka.ProknjizNabavku;
+var
+  Q: TFDQuery;
+  Kolicina: Double;
+  BrojNarudzbine: Integer;
+begin
+  // Validacija — checkbox mora biti cekiran
+  if not edtNapomena.IsChecked then
+  begin
+    ShowMessage('Morate potvrditi da je roba proverena i neostecena!');
+    Exit;
+  end;
+
+  if cmbArtikal.ItemIndex < 0 then
+  begin
+    ShowMessage('Izaberite artikal!');
+    Exit;
+  end;
+  if cmbDobavljac.ItemIndex < 0 then
+  begin
+    ShowMessage('Izaberite dobavljaca!');
+    Exit;
+  end;
+  if not TryStrToFloat(edtKolicina.Text, Kolicina) or (Kolicina <= 0) then
+  begin
+    ShowMessage('Unesite ispravnu kolicinu!');
+    Exit;
+  end;
+  if Trim(edtFaktura.Text) = '' then
+  begin
+    ShowMessage('Unesite broj fakture!');
+    Exit;
+  end;
+
+  Q := TFDQuery.Create(nil);
+  try
+    Q.Connection := DB;
+
+    // Uzmi SifraResursa prema indexu
+    Q.SQL.Text := 'SELECT SifraResursa FROM RESURS ORDER BY Naziv LIMIT 1 OFFSET :idx';
+    Q.ParamByName('idx').AsInteger := cmbArtikal.ItemIndex;
+    Q.Open;
+    FResursID := Q.Fields[0].AsInteger;
+    Q.Close;
+
+    // Uzmi SifraDobavljaca prema indexu
+    Q.SQL.Text := 'SELECT SifraDobavljaca FROM DOBAVLJAC ORDER BY Naziv LIMIT 1 OFFSET :idx';
+    Q.ParamByName('idx').AsInteger := cmbDobavljac.ItemIndex;
+    Q.Open;
+    FDobavljacID := Q.Fields[0].AsInteger;
+    Q.Close;
+
+    // Kreiraj narudzbinu
+    Q.SQL.Text :=
+      'INSERT INTO NARUDZBINA (Datum, SifraDobavljaca, UkupnaVrednost) ' +
+      'VALUES (date(''now''), :dob, 0)';
+    Q.ParamByName('dob').AsInteger := FDobavljacID;
+    Q.ExecSQL;
+
+    // Uzmi ID narudzbine
+    Q.SQL.Text := 'SELECT MAX(BrojNarudzbine) FROM NARUDZBINA';
+    Q.Open;
+    BrojNarudzbine := Q.Fields[0].AsInteger;
+    Q.Close;
+
+    // Dodaj stavku
+    Q.SQL.Text :=
+      'INSERT INTO STAVKA_NARUDZBINE (BrojNarudzbine, SifraResursa, KolicinaNarucena, JedinicnaCena) ' +
+      'VALUES (:brnr, :res, :kol, 0)';
+    Q.ParamByName('brnr').AsInteger := BrojNarudzbine;
+    Q.ParamByName('res').AsInteger  := FResursID;
+    Q.ParamByName('kol').AsFloat    := Kolicina;
+    Q.ExecSQL;
+
+    // Azuriraj kolicinu u RESURS
+    Q.SQL.Text :=
+      'UPDATE RESURS SET TrenutnaKolicina = TrenutnaKolicina + :kol ' +
+      'WHERE SifraResursa = :res';
+    Q.ParamByName('kol').AsFloat   := Kolicina;
+    Q.ParamByName('res').AsInteger := FResursID;
+    Q.ExecSQL;
+
+    // Prikazi uspjeh
+    rectStatus.Fill.Color := $FF4CAF50;
+    lblStatus.Text := 'Uspesno proknjizeno! Stanje u magacinu azurirano.';
+    rectStatus.Visible := True;
+
+    // Ocisti polja
+    cmbArtikal.ItemIndex := -1;
+    cmbDobavljac.ItemIndex := -1;
+    edtKolicina.Text := '';
+    edtFaktura.Text := '';
+    edtNapomena.IsChecked := False;
+
+    // Osvjezi historiju
+    UcitajIstoriju;
+
+    // Provjeri alarm
+    ProveriAlarm;
+
+  except
+    on E: Exception do
+    begin
+      rectStatus.Fill.Color := $FFE53935;
+      lblStatus.Text := 'Greska: ' + E.Message;
+      rectStatus.Visible := True;
+    end;
+  end;
+
+  Q.Free;
+end;
+
+procedure TfraNabavka.ProveriAlarm;
+var
+  Q: TFDQuery;
+  Poruka: string;
+begin
+  Q := TFDQuery.Create(nil);
+  try
+    Q.Connection := DB;
+    Q.SQL.Text :=
+      'SELECT Naziv, TrenutnaKolicina, MinimaKolicina, JedinicaMere FROM RESURS ' +
+      'WHERE TrenutnaKolicina < MinimaKolicina';
+    Q.Open;
+
+    Poruka := '';
+    while not Q.Eof do
+    begin
+      Poruka := Poruka + '⚠ ' + Q.FieldByName('Naziv').AsString + ': ' +
+                FormatFloat('0.#', Q.FieldByName('TrenutnaKolicina').AsFloat) + ' ' +
+                Q.FieldByName('JedinicaMere').AsString +
+                ' (min: ' + FormatFloat('0.#', Q.FieldByName('MinimaKolicina').AsFloat) + ')' + #13#10;
+      Q.Next;
+    end;
+
+    if Poruka <> '' then
+      ShowMessage('ALARM - Niske zalihe!' + #13#10 + Poruka + #13#10 + 'Potrebna nova nabavka!');
+  finally
+    Q.Free;
+  end;
+end;
+
+procedure TfraNabavka.rectPotvrdiClick(Sender: TObject);
+begin
+  ProknjizNabavku;
+end;
+
+procedure TfraNabavka.lblBackClick(Sender: TObject);
+begin
+  TNavFrames.Back;
+end;
+
+end.

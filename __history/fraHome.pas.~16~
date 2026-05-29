@@ -1,0 +1,363 @@
+﻿unit fraHome;
+
+interface
+
+uses
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
+  FMX.Objects, FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox,
+  FireDAC.Comp.Client, uUserStore, uPetModel, uNavFrames, fraMagacin;
+
+type
+  TFrame5 = class(TFrame)
+    Layout1: TLayout;
+    Layout2: TLayout;
+    imgPet: TImage;
+    lblName: TLabel;
+    lblBreed: TLabel;
+    lblAge: TLabel;
+    ListBox1: TListBox;
+    Layout3: TLayout;
+    Rectangle2: TRectangle;
+    Layout7: TLayout;
+    GridLayout1: TGridLayout;
+    Image1: TImage;
+    Image2: TImage;
+    Image3: TImage;
+    Image4: TImage;
+    Label3: TLabel;
+    Image5: TImage;
+    Label4: TLabel;
+    Rectangle3: TRectangle;
+    Rectangle4: TRectangle;
+    Rectangle5: TRectangle;
+    Layout8: TLayout;
+    Label5: TLabel;
+    Layout9: TLayout;
+    Label6: TLabel;
+    Layout10: TLayout;
+    Label7: TLabel;
+    rectPlus: TRectangle;
+    lblPlus: TLabel;
+    procedure FrameEnter(Sender: TObject);
+    procedure btnChangePetClick(Sender: TObject);
+    procedure ListBox1Click(Sender: TObject);
+    procedure Label3Click(Sender: TObject);
+    procedure Image5Click(Sender: TObject);
+    procedure Loaded; override;
+    procedure rectPlusClick(Sender: TObject);
+    procedure lblMenuDashboardClick(Sender: TObject);
+    procedure lblMenuMagacinClick(Sender: TObject);
+    procedure lblMenuNabavkaClick(Sender: TObject);
+    procedure lblMenuEvidencijaClick(Sender: TObject);
+    procedure lblMenuPodesavanjaClick(Sender: TObject);
+  private
+    procedure LoadPetsFromDB;
+    procedure LoadPetsIntoListBox;
+    procedure RefreshMainCard;
+    procedure KreirajPlusIMenu;
+  public
+  end;
+
+implementation
+{$R *.fmx}
+
+procedure TFrame5.Loaded;
+begin
+  inherited;
+  KreirajPlusIMenu;
+  LoadPetsFromDB;
+  LoadPetsIntoListBox;
+  if ActivePetIndex < 0 then
+    ActivePetIndex := 0;
+  RefreshMainCard;
+end;
+
+procedure TFrame5.KreirajPlusIMenu;
+begin
+  // Plavo + dugme
+  rectPlus := TRectangle.Create(Self);
+  rectPlus.Parent := Layout1;
+  rectPlus.Fill.Color := $FF1D6AE5;
+  rectPlus.Stroke.Kind := TBrushKind.None;
+  rectPlus.XRadius := 27;
+  rectPlus.YRadius := 27;
+  rectPlus.Size.Width := 54;
+  rectPlus.Size.Height := 54;
+  rectPlus.Position.X := 310;
+  rectPlus.Position.Y := 490;
+  rectPlus.HitTest := True;
+  rectPlus.OnClick := rectPlusClick;
+
+  lblPlus := TLabel.Create(Self);
+  lblPlus.Parent := rectPlus;
+  lblPlus.Align := TAlignLayout.Client;
+  lblPlus.Text := '+';
+  lblPlus.TextSettings.Font.Size := 30;
+  lblPlus.TextSettings.FontColor := TAlphaColors.White;
+  lblPlus.TextSettings.HorzAlign := TTextAlign.Center;
+  lblPlus.TextSettings.VertAlign := TTextAlign.Center;
+  lblPlus.StyledSettings := [];
+  lblPlus.HitTest := False;
+
+  // Popup meni
+  rectMenu := TRectangle.Create(Self);
+  rectMenu.Parent := Layout1;
+  rectMenu.Fill.Color := TAlphaColors.White;
+  rectMenu.Stroke.Color := $FFE0E0E0;
+  rectMenu.Stroke.Thickness := 1;
+  rectMenu.XRadius := 14;
+  rectMenu.YRadius := 14;
+  rectMenu.Size.Width := 220;
+  rectMenu.Size.Height := 250;
+  rectMenu.Position.X := 100;
+  rectMenu.Position.Y := 330;
+  rectMenu.Visible := False;
+  rectMenu.BringToFront;
+
+  // Dashboard
+  lblMenuDashboard := TLabel.Create(Self);
+  lblMenuDashboard.Parent := rectMenu;
+  lblMenuDashboard.Text := '  Dashboard';
+  lblMenuDashboard.Position.X := 0;
+  lblMenuDashboard.Position.Y := 0;
+  lblMenuDashboard.Size.Width := 220;
+  lblMenuDashboard.Size.Height := 50;
+  lblMenuDashboard.TextSettings.Font.Size := 15;
+  lblMenuDashboard.TextSettings.FontColor := $FF333333;
+  lblMenuDashboard.TextSettings.VertAlign := TTextAlign.Center;
+  lblMenuDashboard.HitTest := True;
+  lblMenuDashboard.Cursor := crHandPoint;
+  lblMenuDashboard.OnClick := lblMenuDashboardClick;
+
+  // Magacin
+  lblMenuMagacin := TLabel.Create(Self);
+  lblMenuMagacin.Parent := rectMenu;
+  lblMenuMagacin.Text := '  Magacin';
+  lblMenuMagacin.Position.X := 0;
+  lblMenuMagacin.Position.Y := 50;
+  lblMenuMagacin.Size.Width := 220;
+  lblMenuMagacin.Size.Height := 50;
+  lblMenuMagacin.TextSettings.Font.Size := 15;
+  lblMenuMagacin.TextSettings.FontColor := $FF333333;
+  lblMenuMagacin.TextSettings.VertAlign := TTextAlign.Center;
+  lblMenuMagacin.HitTest := True;
+  lblMenuMagacin.Cursor := crHandPoint;
+  lblMenuMagacin.OnClick := lblMenuMagacinClick;
+
+  // Nabavka robe
+  lblMenuNabavka := TLabel.Create(Self);
+  lblMenuNabavka.Parent := rectMenu;
+  lblMenuNabavka.Text := '  Nabavka robe';
+  lblMenuNabavka.Position.X := 0;
+  lblMenuNabavka.Position.Y := 100;
+  lblMenuNabavka.Size.Width := 220;
+  lblMenuNabavka.Size.Height := 50;
+  lblMenuNabavka.TextSettings.Font.Size := 15;
+  lblMenuNabavka.TextSettings.FontColor := $FF333333;
+  lblMenuNabavka.TextSettings.VertAlign := TTextAlign.Center;
+  lblMenuNabavka.HitTest := True;
+  lblMenuNabavka.Cursor := crHandPoint;
+  lblMenuNabavka.OnClick := lblMenuNabavkaClick;
+
+  // Evidencija obroka
+  lblMenuEvidencija := TLabel.Create(Self);
+  lblMenuEvidencija.Parent := rectMenu;
+  lblMenuEvidencija.Text := '  Evidencija obroka';
+  lblMenuEvidencija.Position.X := 0;
+  lblMenuEvidencija.Position.Y := 150;
+  lblMenuEvidencija.Size.Width := 220;
+  lblMenuEvidencija.Size.Height := 50;
+  lblMenuEvidencija.TextSettings.Font.Size := 15;
+  lblMenuEvidencija.TextSettings.FontColor := $FF333333;
+  lblMenuEvidencija.TextSettings.VertAlign := TTextAlign.Center;
+  lblMenuEvidencija.HitTest := True;
+  lblMenuEvidencija.Cursor := crHandPoint;
+  lblMenuEvidencija.OnClick := lblMenuEvidencijaClick;
+
+  // Podesavanja alarma
+  lblMenuPodesavanja := TLabel.Create(Self);
+  lblMenuPodesavanja.Parent := rectMenu;
+  lblMenuPodesavanja.Text := '  Podesavanja alarma';
+  lblMenuPodesavanja.Position.X := 0;
+  lblMenuPodesavanja.Position.Y := 200;
+  lblMenuPodesavanja.Size.Width := 220;
+  lblMenuPodesavanja.Size.Height := 50;
+  lblMenuPodesavanja.TextSettings.Font.Size := 15;
+  lblMenuPodesavanja.TextSettings.FontColor := $FF333333;
+  lblMenuPodesavanja.TextSettings.VertAlign := TTextAlign.Center;
+  lblMenuPodesavanja.HitTest := True;
+  lblMenuPodesavanja.Cursor := crHandPoint;
+  lblMenuPodesavanja.OnClick := lblMenuPodesavanjaClick;
+end;
+
+procedure TFrame5.rectPlusClick(Sender: TObject);
+begin
+  rectMenu.Visible := not rectMenu.Visible;
+  if rectMenu.Visible then
+    rectMenu.BringToFront;
+end;
+
+procedure TFrame5.lblMenuDashboardClick(Sender: TObject);
+begin
+  rectMenu.Visible := False;
+end;
+
+procedure TFrame5.lblMenuMagacinClick(Sender: TObject);
+begin
+  rectMenu.Visible := False;
+  TNavFrames.Go(TfraMagacin.Create(nil));
+end;
+
+procedure TFrame5.lblMenuNabavkaClick(Sender: TObject);
+begin
+  rectMenu.Visible := False;
+  ShowMessage('Nabavka robe dolazi uskoro!');
+end;
+
+procedure TFrame5.lblMenuEvidencijaClick(Sender: TObject);
+begin
+  rectMenu.Visible := False;
+  ShowMessage('Evidencija obroka dolazi uskoro!');
+end;
+
+procedure TFrame5.lblMenuPodesavanjaClick(Sender: TObject);
+begin
+  rectMenu.Visible := False;
+  ShowMessage('Podesavanja alarma dolaze uskoro!');
+end;
+
+procedure TFrame5.FrameEnter(Sender: TObject);
+begin
+  LoadPetsFromDB;
+  LoadPetsIntoListBox;
+  RefreshMainCard;
+  if Pets[0].Id = 0 then
+    LoadPetsFromDB;
+  LoadPetsIntoListBox;
+  if ActivePetIndex = -1 then
+    ActivePetIndex := 0;
+  RefreshMainCard;
+end;
+
+procedure TFrame5.Image5Click(Sender: TObject);
+begin
+  ActivePetIndex := -1;
+  ListBox1.Visible := False;
+  TNavFrames.GoLogin;
+end;
+
+procedure TFrame5.LoadPetsFromDB;
+var
+  Q: TFDQuery;
+  i: Integer;
+begin
+  Q := TFDQuery.Create(nil);
+  try
+    Q.Connection := DB;
+    Q.SQL.Text := 'SELECT id, name, species, breed, age, image_blob FROM pets ORDER BY id';
+    Q.Open;
+    FillChar(Pets, SizeOf(Pets), 0);
+    i := 0;
+    while not Q.Eof and (i <= High(Pets)) do
+    begin
+      Pets[i].Id := Q.FieldByName('id').AsInteger;
+      Pets[i].Name := Q.FieldByName('name').AsString;
+      Pets[i].Species := Q.FieldByName('species').AsString;
+      Pets[i].Breed := Q.FieldByName('breed').AsString;
+      Pets[i].Age := Q.FieldByName('age').AsString;
+      Pets[i].ImageBlob := Q.FieldByName('image_blob').AsBytes;
+      Inc(i);
+      Q.Next;
+    end;
+    if i = 0 then
+      ShowMessage('Nema ljubimaca u bazi. Dodajte prvog!');
+  finally
+    Q.Free;
+  end;
+end;
+
+procedure TFrame5.LoadPetsIntoListBox;
+var
+  i: Integer;
+  Item: TListBoxItem;
+begin
+  ListBox1.BeginUpdate;
+  try
+    ListBox1.Clear;
+    for i := 0 to High(Pets) do
+    begin
+      if Pets[i].Id = 0 then
+        Continue;
+      Item := TListBoxItem.Create(ListBox1);
+      Item.Text := Pets[i].Name;
+      Item.ItemData.Detail := Pets[i].Breed + ' • ' + Pets[i].Age;
+      ListBox1.AddObject(Item);
+    end;
+  finally
+    ListBox1.EndUpdate;
+  end;
+  if (ActivePetIndex >= 0) and (ActivePetIndex < ListBox1.Count) then
+    ListBox1.ItemIndex := ActivePetIndex;
+end;
+
+procedure TFrame5.RefreshMainCard;
+var
+  Stream: TMemoryStream;
+begin
+  if (ActivePetIndex < 0) or (Pets[ActivePetIndex].Id = 0) then
+  begin
+    imgPet.Bitmap.Clear(TAlphaColors.Null);
+    lblName.Text := 'Izaberi ljubimca';
+    lblBreed.Text := '';
+    lblAge.Text := '';
+    Exit;
+  end;
+  lblName.Text := Pets[ActivePetIndex].Name;
+  lblBreed.Text := Pets[ActivePetIndex].Breed;
+  lblAge.Text := Pets[ActivePetIndex].Age;
+  if Length(Pets[ActivePetIndex].ImageBlob) > 0 then
+  begin
+    Stream := TMemoryStream.Create;
+    try
+      Stream.WriteBuffer(
+        Pets[ActivePetIndex].ImageBlob[0],
+        Length(Pets[ActivePetIndex].ImageBlob)
+      );
+      Stream.Position := 0;
+      imgPet.Bitmap.LoadFromStream(Stream);
+    finally
+      Stream.Free;
+    end;
+  end
+  else
+    imgPet.Bitmap.Clear(TAlphaColors.Lightgray);
+end;
+
+procedure TFrame5.btnChangePetClick(Sender: TObject);
+begin
+  ListBox1.Visible := not ListBox1.Visible;
+  if ListBox1.Visible then
+    ListBox1.BringToFront
+  else
+    ListBox1.SendToBack;
+end;
+
+procedure TFrame5.Label3Click(Sender: TObject);
+begin
+  ListBox1.Visible := not ListBox1.Visible;
+  if ListBox1.Visible then
+    ListBox1.BringToFront
+  else
+    ListBox1.SendToBack;
+end;
+
+procedure TFrame5.ListBox1Click(Sender: TObject);
+begin
+  if ListBox1.ItemIndex < 0 then Exit;
+  ActivePetIndex := ListBox1.ItemIndex;
+  RefreshMainCard;
+  ListBox1.Visible := False;
+end;
+
+end.

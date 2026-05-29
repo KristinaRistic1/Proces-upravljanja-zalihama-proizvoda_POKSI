@@ -6,7 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Objects, FMX.Controls.Presentation, FMX.Layouts, FMX.ListBox,
-  FireDAC.Comp.Client, uUserStore, uPetModel,uNavFrames;
+  FireDAC.Comp.Client, uUserStore, uPetModel, uNavFrames,
+  fraMagacin, fraNabavka, fraEvidencija, fraDashboard, fraIzvestaj;
 
 type
   TFrame5 = class(TFrame)
@@ -44,9 +45,24 @@ type
     procedure Image5Click(Sender: TObject);
     procedure Loaded; override;
   private
+    FRectPlus: TRectangle;
+    FLblPlus: TLabel;
+    FRectMenu: TRectangle;
+    FLblDashboard: TLabel;
+    FLblMagacin: TLabel;
+    FLblNabavka: TLabel;
+    FLblEvidencija: TLabel;
+    FLblPodesavanja: TLabel;
     procedure LoadPetsFromDB;
     procedure LoadPetsIntoListBox;
     procedure RefreshMainCard;
+    procedure KreirajPlusIMenu;
+    procedure OnPlusClick(Sender: TObject);
+    procedure OnDashboardClick(Sender: TObject);
+    procedure OnMagacinClick(Sender: TObject);
+    procedure OnNabavkaClick(Sender: TObject);
+    procedure OnEvidencijaClick(Sender: TObject);
+    procedure OnPodesavanjaClick(Sender: TObject);
   public
   end;
 
@@ -56,15 +72,132 @@ implementation
 procedure TFrame5.Loaded;
 begin
   inherited;
-
+  KreirajPlusIMenu;
   LoadPetsFromDB;
   LoadPetsIntoListBox;
-
   if ActivePetIndex < 0 then
     ActivePetIndex := 0;
-
   RefreshMainCard;
 end;
+
+procedure TFrame5.KreirajPlusIMenu;
+var
+  i: Integer;
+  Labele: array[0..4] of TLabel;
+  Tekstovi: array[0..4] of string;
+  Eventi: array[0..4] of TNotifyEvent;
+begin
+  FRectPlus := TRectangle.Create(Self);
+  FRectPlus.Parent := Layout1;
+  FRectPlus.Fill.Color := $FF1D6AE5;
+  FRectPlus.Stroke.Kind := TBrushKind.None;
+  FRectPlus.XRadius := 27;
+  FRectPlus.YRadius := 27;
+  FRectPlus.Width := 54;
+  FRectPlus.Height := 54;
+  FRectPlus.Position.X := 310;
+  FRectPlus.Position.Y := 580;
+  FRectPlus.HitTest := True;
+  FRectPlus.OnClick := OnPlusClick;
+
+  FLblPlus := TLabel.Create(Self);
+  FLblPlus.Parent := FRectPlus;
+  FLblPlus.Align := TAlignLayout.Client;
+  FLblPlus.Text := '+';
+  FLblPlus.StyledSettings := [];
+  FLblPlus.TextSettings.Font.Size := 30;
+  FLblPlus.TextSettings.FontColor := TAlphaColors.White;
+  FLblPlus.TextSettings.HorzAlign := TTextAlign.Center;
+  FLblPlus.TextSettings.VertAlign := TTextAlign.Center;
+  FLblPlus.HitTest := False;
+
+  FRectMenu := TRectangle.Create(Self);
+  FRectMenu.Parent := Layout1;
+  FRectMenu.Fill.Color := TAlphaColors.White;
+  FRectMenu.Stroke.Color := $FFE0E0E0;
+  FRectMenu.Stroke.Thickness := 1;
+  FRectMenu.XRadius := 14;
+  FRectMenu.YRadius := 14;
+  FRectMenu.Width := 230;
+  FRectMenu.Height := 255;
+  FRectMenu.Position.X := 80;
+  FRectMenu.Position.Y := 320;
+  FRectMenu.Visible := False;
+
+  Tekstovi[0] := '  Dashboard';
+  Tekstovi[1] := '  Magacin';
+  Tekstovi[2] := '  Nabavka robe';
+  Tekstovi[3] := '  Evidencija';
+  Tekstovi[4] := '  Izvestaji';
+
+  Eventi[0] := OnDashboardClick;
+  Eventi[1] := OnMagacinClick;
+  Eventi[2] := OnNabavkaClick;
+  Eventi[3] := OnEvidencijaClick;
+  Eventi[4] := OnPodesavanjaClick;
+
+  for i := 0 to 4 do
+  begin
+    Labele[i] := TLabel.Create(Self);
+    Labele[i].Parent := FRectMenu;
+    Labele[i].Text := Tekstovi[i];
+    Labele[i].Position.X := 0;
+    Labele[i].Position.Y := i * 51;
+    Labele[i].Width := 230;
+    Labele[i].Height := 50;
+    Labele[i].StyledSettings := [];
+    Labele[i].TextSettings.Font.Size := 15;
+    Labele[i].TextSettings.FontColor := $FF333333;
+    Labele[i].TextSettings.VertAlign := TTextAlign.Center;
+    Labele[i].HitTest := True;
+    Labele[i].Cursor := crHandPoint;
+    Labele[i].OnClick := Eventi[i];
+  end;
+
+  FLblDashboard   := Labele[0];
+  FLblMagacin     := Labele[1];
+  FLblNabavka     := Labele[2];
+  FLblEvidencija  := Labele[3];
+  FLblPodesavanja := Labele[4];
+end;
+
+procedure TFrame5.OnPlusClick(Sender: TObject);
+begin
+  FRectMenu.Visible := not FRectMenu.Visible;
+  if FRectMenu.Visible then
+    FRectMenu.BringToFront;
+end;
+
+procedure TFrame5.OnDashboardClick(Sender: TObject);
+begin
+  FRectMenu.Visible := False;
+  TNavFrames.Go(TfraDashboard.Create(nil));
+end;
+
+procedure TFrame5.OnMagacinClick(Sender: TObject);
+begin
+  FRectMenu.Visible := False;
+  TNavFrames.Go(TfraMagacin.Create(nil));
+end;
+
+procedure TFrame5.OnNabavkaClick(Sender: TObject);
+begin
+  FRectMenu.Visible := False;
+  TNavFrames.Go(TfraNabavka.Create(nil));
+end;
+
+procedure TFrame5.OnEvidencijaClick(Sender: TObject);
+begin
+  FRectMenu.Visible := False;
+  TNavFrames.Go(TfraEvidencija.Create(nil));
+end;
+
+procedure TFrame5.OnPodesavanjaClick(Sender: TObject);
+begin
+  FRectMenu.Visible := False;
+  TNavFrames.Go(TfraIzvestaj.Create(nil));
+end;
+
 procedure TFrame5.FrameEnter(Sender: TObject);
 begin
   LoadPetsFromDB;
@@ -82,7 +215,7 @@ procedure TFrame5.Image5Click(Sender: TObject);
 begin
   ActivePetIndex := -1;
   ListBox1.Visible := False;
- TNavFrames.GoLogin;
+  TNavFrames.GoLogin;
 end;
 
 procedure TFrame5.LoadPetsFromDB;
@@ -95,7 +228,6 @@ begin
     Q.Connection := DB;
     Q.SQL.Text := 'SELECT id, name, species, breed, age, image_blob FROM pets ORDER BY id';
     Q.Open;
-
     FillChar(Pets, SizeOf(Pets), 0);
     i := 0;
     while not Q.Eof and (i <= High(Pets)) do
@@ -109,8 +241,6 @@ begin
       Inc(i);
       Q.Next;
     end;
-
-    
     if i = 0 then
       ShowMessage('Nema ljubimaca u bazi. Dodajte prvog!');
   finally
@@ -126,27 +256,21 @@ begin
   ListBox1.BeginUpdate;
   try
     ListBox1.Clear;
-
     for i := 0 to High(Pets) do
     begin
       if Pets[i].Id = 0 then
         Continue;
-
       Item := TListBoxItem.Create(ListBox1);
       Item.Text := Pets[i].Name;
       Item.ItemData.Detail := Pets[i].Breed + ' • ' + Pets[i].Age;
-
       ListBox1.AddObject(Item);
     end;
-
   finally
     ListBox1.EndUpdate;
   end;
-
   if (ActivePetIndex >= 0) and (ActivePetIndex < ListBox1.Count) then
     ListBox1.ItemIndex := ActivePetIndex;
 end;
-
 
 procedure TFrame5.RefreshMainCard;
 var
@@ -160,11 +284,9 @@ begin
     lblAge.Text := '';
     Exit;
   end;
-
   lblName.Text := Pets[ActivePetIndex].Name;
   lblBreed.Text := Pets[ActivePetIndex].Breed;
   lblAge.Text := Pets[ActivePetIndex].Age;
-
   if Length(Pets[ActivePetIndex].ImageBlob) > 0 then
   begin
     Stream := TMemoryStream.Create;
@@ -208,9 +330,5 @@ begin
   RefreshMainCard;
   ListBox1.Visible := False;
 end;
-
-
-
-
 
 end.

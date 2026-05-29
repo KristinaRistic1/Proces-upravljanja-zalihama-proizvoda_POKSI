@@ -2,8 +2,9 @@ object Form5: TForm5
   Left = 0
   Top = 0
   Caption = 'Form5'
-  ClientHeight = 844
+  ClientHeight = 780
   ClientWidth = 392
+  WindowState = wsMaximized
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
@@ -12,7 +13,7 @@ object Form5: TForm5
   object layHost: TLayout
     Align = Client
     Size.Width = 392.000000000000000000
-    Size.Height = 844.000000000000000000
+    Size.Height = 780.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
   end
@@ -24,7 +25,7 @@ object Form5: TForm5
   object FDConnection1: TFDConnection
     Params.Strings = (
       'DriverID=SQLite'
-      'Database=users.db')
+      'Database=poksi.db')
     LoginPrompt = False
     Left = 248
     Top = 560
