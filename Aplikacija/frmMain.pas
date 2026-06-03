@@ -21,6 +21,7 @@ type
     procedure FormCreate(Sender: TObject);
   private
     procedure LoadPetsFromDB;
+    procedure KreirajTabele;
   public
     { Public declarations }
   end;
@@ -31,6 +32,139 @@ var
 implementation
 
 {$R *.fmx}
+
+procedure TForm5.KreirajTabele;
+begin
+  FDQuery1.SQL.Text :=
+    'CREATE TABLE IF NOT EXISTS DOBAVLJAC (' +
+    'SifraDobavljaca INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    'Naziv VARCHAR(100),' +
+    'PIB VARCHAR(20),' +
+    'Telefon VARCHAR(20),' +
+    'Email VARCHAR(100))';
+  FDQuery1.ExecSQL;
+
+  FDQuery1.SQL.Text :=
+    'CREATE TABLE IF NOT EXISTS RESURS (' +
+    'SifraResursa INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    'Naziv VARCHAR(100),' +
+    'Kategorija VARCHAR(50),' +
+    'JedinicaMere VARCHAR(20),' +
+    'TrenutnaKolicina REAL,' +
+    'MinimaKolicina REAL,' +
+    'RokTrajanja DATE)';
+  FDQuery1.ExecSQL;
+
+  FDQuery1.SQL.Text :=
+    'CREATE TABLE IF NOT EXISTS OSOBLJE (' +
+    'SifraOsoblja INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    'Ime VARCHAR(50),' +
+    'Prezime VARCHAR(50),' +
+    'Uloga VARCHAR(50),' +
+    'KorisnickoIme VARCHAR(50),' +
+    'Lozinka VARCHAR(50))';
+  FDQuery1.ExecSQL;
+
+  FDQuery1.SQL.Text :=
+    'CREATE TABLE IF NOT EXISTS MUSTERIJA (' +
+    'Sifra_musterije INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    'Ime VARCHAR(50),' +
+    'Prezime VARCHAR(50),' +
+    'Telefon_Hitno VARCHAR(20),' +
+    'KorisnickoIme VARCHAR(50),' +
+    'Lozinka VARCHAR(50))';
+  FDQuery1.ExecSQL;
+
+  FDQuery1.SQL.Text :=
+    'CREATE TABLE IF NOT EXISTS LJUBIMAC (' +
+    'Sifra_ljubimca INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    'Ime VARCHAR(50),' +
+    'Rasa VARCHAR(50),' +
+    'Status VARCHAR(20),' +
+    'Sifra_musterije INTEGER,' +
+    'FOREIGN KEY (Sifra_musterije) REFERENCES MUSTERIJA(Sifra_musterije))';
+  FDQuery1.ExecSQL;
+
+  FDQuery1.SQL.Text :=
+    'CREATE TABLE IF NOT EXISTS NARUDZBINA (' +
+    'BrojNarudzbine INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    'Datum DATE,' +
+    'SifraDobavljaca INTEGER,' +
+    'UkupnaVrednost REAL,' +
+    'FOREIGN KEY (SifraDobavljaca) REFERENCES DOBAVLJAC(SifraDobavljaca))';
+  FDQuery1.ExecSQL;
+
+  FDQuery1.SQL.Text :=
+    'CREATE TABLE IF NOT EXISTS STAVKA_NARUDZBINE (' +
+    'IDStavke INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    'BrojNarudzbine INTEGER,' +
+    'SifraResursa INTEGER,' +
+    'KolicinaNarucena REAL,' +
+    'JedinicnaCena REAL,' +
+    'FOREIGN KEY (BrojNarudzbine) REFERENCES NARUDZBINA(BrojNarudzbine),' +
+    'FOREIGN KEY (SifraResursa) REFERENCES RESURS(SifraResursa))';
+  FDQuery1.ExecSQL;
+
+  FDQuery1.SQL.Text :=
+    'CREATE TABLE IF NOT EXISTS TREBOVANJE (' +
+    'BrojTrebovanja INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    'Datum DATE,' +
+    'SifraOsoblja INTEGER,' +
+    'Status VARCHAR(20),' +
+    'Napomena TEXT,' +
+    'FOREIGN KEY (SifraOsoblja) REFERENCES OSOBLJE(SifraOsoblja))';
+  FDQuery1.ExecSQL;
+
+  FDQuery1.SQL.Text :=
+    'CREATE TABLE IF NOT EXISTS STAVKA_TREBOVANJA (' +
+    'IDStavke INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    'BrojTrebovanja INTEGER,' +
+    'SifraResursa INTEGER,' +
+    'KolicinaTrazena REAL,' +
+    'KolicinaOdobrena REAL,' +
+    'FOREIGN KEY (BrojTrebovanja) REFERENCES TREBOVANJE(BrojTrebovanja),' +
+    'FOREIGN KEY (SifraResursa) REFERENCES RESURS(SifraResursa))';
+  FDQuery1.ExecSQL;
+
+  FDQuery1.SQL.Text :=
+    'CREATE TABLE IF NOT EXISTS PRIJEMNICA (' +
+    'BrojPrijemnice INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    'Datum DATE,' +
+    'BrojNarudzbine INTEGER,' +
+    'SifraOsoblja INTEGER,' +
+    'Napomena TEXT,' +
+    'FOREIGN KEY (BrojNarudzbine) REFERENCES NARUDZBINA(BrojNarudzbine),' +
+    'FOREIGN KEY (SifraOsoblja) REFERENCES OSOBLJE(SifraOsoblja))';
+  FDQuery1.ExecSQL;
+
+  FDQuery1.SQL.Text :=
+    'CREATE TABLE IF NOT EXISTS STAVKA_PRIJEMNICE (' +
+    'IDStavke INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    'BrojPrijemnice INTEGER,' +
+    'SifraResursa INTEGER,' +
+    'KolicinaNarucena REAL,' +
+    'KoličinaPrimljena REAL,' +
+    'JedinicnaCena REAL,' +
+    'FOREIGN KEY (BrojPrijemnice) REFERENCES PRIJEMNICA(BrojPrijemnice),' +
+    'FOREIGN KEY (SifraResursa) REFERENCES RESURS(SifraResursa))';
+  FDQuery1.ExecSQL;
+
+  FDQuery1.SQL.Text :=
+    'CREATE TABLE IF NOT EXISTS DNEVNA_AKTIVNOST (' +
+    'Sifra_aktivnosti INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    'Vrsta_aktivnosti VARCHAR(50),' +
+    'Vreme_Aktivnosti DATETIME,' +
+    'Ocena INTEGER,' +
+    'Komentar TEXT,' +
+    'Sifra_zaposlenog INTEGER,' +
+    'Sifra_ljubimca INTEGER,' +
+    'SifraResursa INTEGER,' +
+    'KolicinaUtrosena REAL,' +
+    'FOREIGN KEY (Sifra_zaposlenog) REFERENCES OSOBLJE(SifraOsoblja),' +
+    'FOREIGN KEY (Sifra_ljubimca) REFERENCES LJUBIMAC(Sifra_ljubimca),' +
+    'FOREIGN KEY (SifraResursa) REFERENCES RESURS(SifraResursa))';
+  FDQuery1.ExecSQL;
+end;
 
 procedure TForm5.FormCreate(Sender: TObject);
 var
@@ -65,6 +199,8 @@ begin
     ')';
   FDQuery1.ExecSQL;
 
+  KreirajTabele;
+
   FDQuery1.SQL.Text := 'SELECT COUNT(*) FROM pets';
   FDQuery1.Open;
   if FDQuery1.Fields[0].AsInteger = 0 then
@@ -98,8 +234,8 @@ begin
     FDQuery1.ExecSQL;
 
     FDQuery1.ParamByName('name').AsString := 'Maca';
-    FDQuery1.ParamByName('species').AsString := 'mačka';
-    FDQuery1.ParamByName('breed').AsString := 'Persijska mačka';
+    FDQuery1.ParamByName('species').AsString := 'macka';
+    FDQuery1.ParamByName('breed').AsString := 'Persijska macka';
     FDQuery1.ParamByName('age').AsString := '2 godine';
     Stream := TResourceStream.Create(HInstance, 'PngImage_3', RT_RCDATA);
     try
